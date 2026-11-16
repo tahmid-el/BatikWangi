@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BatikWangi — Katalog & Dashboard UMKM Batik & Kebaya Banyuwangi</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Playfair Display untuk nuansa heritage elegan -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            soga: {
+              50: '#fdfaf6',
+              100: '#f8f1e7',
+              200: '#efe0cb',
+              300: '#e2c6a3',
+              400: '#d3a675',
+              500: '#c4894f',
+              600: '#b3713e',
+              700: '#945833',
+              800: '#78472e',
+              900: '#3d2316',
+              950: '#24130b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-soga-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-600 selection:text-white">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Navbar / Header Utama -->
+  <header class="sticky top-0 z-40 bg-soga-950/95 backdrop-blur-md text-soga-50 border-b border-amber-500/20 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between py-3.5 gap-3">
+        
+        <!-- Brand Identity -->
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-inner border border-amber-300/30">
+              <!-- Ornamen Gajah Oling Minimalis SVG -->
+              <svg class="w-6 h-6 text-soga-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3c-4.5 0-7 3.5-7 7.5 0 3.5 2.5 5.5 5 5.5 2 0 3.5-1.5 3.5-3.2 0-1.5-1.2-2.5-2.5-2.5-1 0-1.8.8-1.8 1.7"/>
+                <path d="M12 3c4 0 7 3 7 8 0 4.5-3.5 8-8 8-2.5 0-4.5-1-6-2.5"/>
+                <circle cx="15.5" cy="7.5" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-amber-400 leading-none">
+                Batik<span class="text-soga-50">Wangi</span>
+              </h1>
+              <p class="text-[11px] text-soga-300 tracking-wider uppercase mt-0.5">Kriya Wastra & Kebaya Banyuwangi</p>
+            </div>
+          </div>
+
+          <!-- Tombol WhatsApp Config & SPEC (Mobile) -->
+          <div class="flex items-center gap-1.5 sm:hidden">
+            <button onclick="openWhatsAppConfigModal()" class="p-2 rounded-lg bg-soga-900 text-emerald-400 border border-emerald-500/30 text-xs font-medium flex items-center gap-1">
+              <i data-lucide="phone" class="w-4 h-4"></i> WA
+            </button>
+            <button onclick="openSpecModal()" class="p-2 rounded-lg bg-soga-900 text-amber-400 border border-amber-500/30 text-xs font-medium flex items-center gap-1">
+              <i data-lucide="file-text" class="w-4 h-4"></i> SPEC
+            </button>
+          </div>
+        </div>
+
+        <!-- Dual-Mode Switcher + WA Config Button + SPEC Button -->
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-center">
+          <nav class="bg-soga-900 p-1 rounded-xl border border-amber-500/20 flex items-center w-full sm:w-auto" role="tablist" aria-label="Mode Tampilan">
+            <button id="tab-buyer" onclick="switchMode('buyer')" role="tab" aria-selected="true"
+              class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 bg-amber-500 text-soga-950 shadow-sm">
+              <i data-lucide="store" class="w-4 h-4"></i>
+              <span>Katalog Pembeli</span>
+            </button>
+            <button id="tab-admin" onclick="switchMode('admin')" role="tab" aria-selected="false"
+              class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 text-soga-200 hover:text-white">
+              <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+              <span>Dashboard Pengelola</span>
+            </button>
+          </nav>
+
+          <button onclick="openWhatsAppConfigModal()" title="Konfigurasi Nomor WhatsApp Penjual"
+            class="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-soga-900 hover:bg-soga-800 text-emerald-400 border border-emerald-500/30 text-xs font-medium transition shadow-sm">
+            <i data-lucide="message-square-code" class="w-4 h-4"></i>
+            <span>No. WhatsApp</span>
+          </button>
+
+          <button onclick="openSpecModal()" title="Lihat Dokumen SPEC.md"
+            class="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-soga-900 hover:bg-soga-800 text-amber-300 border border-amber-500/25 text-xs font-medium transition">
+            <i data-lucide="file-code-2" class="w-4 h-4"></i>
+            <span>SPEC.md</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 1: KATALOG PEMBELI                                               -->
+  <!-- ===================================================================== -->
+  <main id="view-buyer" class="flex-1">
+    
+    <!-- Hero Banner Budaya Banyuwangi -->
+    <section class="relative bg-gradient-to-br from-soga-950 via-soga-900 to-stone-900 text-soga-50 overflow-hidden border-b border-amber-600/20">
+      <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 24px 24px;"></div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 relative z-10">
+        <div class="max-w-3xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium mb-4">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Warisan Budaya Bumi Blambangan</span>
+          </div>
+          <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+            Keanggunan Wastra <span class="text-amber-400 italic">Gajah Oling</span> & Kebaya Osing
+          </h2>
+          <p class="mt-3 sm:mt-4 text-sm sm:text-base text-soga-200 leading-relaxed max-w-2xl">
+            Kurasi koleksi batik tulis, batik cap, hingga kebaya khas pengrajin UMKM Banyuwangi. Pilih motif autentik dan pesan langsung ke pengrajin melalui WhatsApp.
+          </p>
+          <div class="mt-4 flex items-center gap-2 text-xs text-emerald-300 font-medium">
+            <i data-lucide="shield-check" class="w-4 h-4 shrink-0"></i>
+            <span>Pesan langsung terarah ke Nomor WA Penjual Aktif yang dikonfigurasi pengelola toko.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kontrol Pencarian, Filter & Sorting -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
+      <div class="bg-white rounded-2xl shadow-md border border-soga-200/80 p-4 sm:p-5">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center">
+          
+          <div class="md:col-span-5 relative">
+            <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="buyer-search" oninput="renderBuyerCatalog()"
+              placeholder="Cari motif batik, kebaya, deskripsi..."
+              class="w-full pl-10 pr-9 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition" />
+            <button id="clear-search-btn" onclick="clearBuyerSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700">
+              <i data-lucide="x-circle" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="md:col-span-4">
+            <select id="buyer-category" onchange="renderBuyerCatalog()"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm font-medium text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500">
+              <option value="ALL">Semua Kategori Wastra</option>
+              <option value="Batik Tulis">Batik Tulis</option>
+              <option value="Batik Cap">Batik Cap</option>
+              <option value="Kebaya">Kebaya</option>
+              <option value="Aksesoris & Bawahan">Aksesoris & Bawahan</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-3">
+            <select id="buyer-sort" onchange="renderBuyerCatalog()"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm font-medium text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500">
+              <option value="default">Urutkan: Unggulan & Terbaru</option>
+              <option value="price-asc">Harga: Terendah ke Tertinggi</option>
+              <option value="price-desc">Harga: Tertinggi ke Terendah</option>
+              <option value="name-asc">Nama Produk: A - Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3.5 border-t border-soga-100">
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="chip-featured" onclick="toggleQuickFilter('featured')"
+              class="px-3 py-1.5 rounded-full text-xs font-semibold border border-soga-200 bg-soga-50 text-stone-700 hover:border-amber-500 transition flex items-center gap-1.5">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-amber-600"></i>
+              <span>Produk Unggulan</span>
+            </button>
+            <button id="chip-instock" onclick="toggleQuickFilter('instock')"
+              class="px-3 py-1.5 rounded-full text-xs font-semibold border border-soga-200 bg-soga-50 text-stone-700 hover:border-emerald-500 transition flex items-center gap-1.5">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>Stok Tersedia</span>
+            </button>
+          </div>
+
+          <p id="buyer-result-count" class="text-xs text-stone-500 font-medium">Menampilkan 8 produk</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid Katalog Produk -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <div id="buyer-product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+      <div id="buyer-empty-state" class="hidden text-center py-16 bg-white rounded-2xl border border-soga-200/80 shadow-sm">
+        <div class="w-16 h-16 rounded-full bg-soga-100 text-soga-700 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="search-x" class="w-8 h-8"></i>
+        </div>
+        <h3 class="font-serif text-xl font-bold text-stone-800">Produk Tidak Ditemukan</h3>
+        <p class="text-sm text-stone-500 mt-1 max-w-md mx-auto">Coba ubah kata kunci pencarian atau reset filter kategori yang sedang aktif.</p>
+        <button onclick="resetAllBuyerFilters()" class="mt-5 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold transition">
+          Reset Semua Filter
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 2: DASHBOARD PENGELOLA UMKM                                      -->
+  <!-- ===================================================================== -->
+  <main id="view-admin" class="hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div>
+        <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-md mb-1.5">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Mode Pengelola Toko
+        </div>
+        <h2 class="font-serif text-2xl sm:text-3xl font-bold text-soga-950">Dashboard Inventaris BatikWangi</h2>
+        <p class="text-sm text-stone-600 mt-0.5">Kelola nomor WhatsApp penjual, stok, harga, dan koleksi unggulan UMKM Banyuwangi.</p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button onclick="openWhatsAppConfigModal()"
+          class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-2 shadow-sm">
+          <i data-lucide="phone-call" class="w-4 h-4"></i>
+          <span>Ganti No. WhatsApp</span>
+        </button>
+        <button onclick="confirmResetData()"
+          class="px-4 py-2.5 rounded-xl border border-soga-300 bg-white hover:bg-soga-100 text-stone-700 text-xs sm:text-sm font-semibold transition flex items-center gap-2 shadow-sm">
+          <i data-lucide="rotate-ccw" class="w-4 h-4 text-soga-700"></i>
+          <span>Reset Data</span>
+        </button>
+        <button onclick="openProductFormModal()"
+          class="px-4 py-2.5 rounded-xl bg-soga-900 hover:bg-soga-800 text-amber-400 text-xs sm:text-sm font-semibold transition flex items-center gap-2 shadow-md">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Tambah Produk Baru</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Banner Info No WA Aktif -->
+    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Nomor WhatsApp Penjual Tujuan Saat Ini</p>
+          <p id="admin-display-wa" class="text-lg font-bold text-emerald-950 mt-0.5">+62 812-3456-7890</p>
+        </div>
+      </div>
+      <button onclick="openWhatsAppConfigModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow-sm">
+        Ubah Nomor Tujuan
+      </button>
+    </div>
+
+    <!-- KPI Summary Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Total Produk</p>
+          <p id="kpi-total-products" class="text-2xl sm:text-3xl font-bold text-soga-950 mt-1">0</p>
+          <p class="text-xs text-stone-400 mt-1">Item terdaftar</p>
+        </div>
+        <div class="p-3 rounded-xl bg-amber-50 text-amber-600 border border-amber-200/60"><i data-lucide="package" class="w-5 h-5"></i></div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Total Stok</p>
+          <p id="kpi-total-stock" class="text-2xl sm:text-3xl font-bold text-emerald-700 mt-1">0</p>
+          <p class="text-xs text-stone-400 mt-1">Potong / unit siap jual</p>
+        </div>
+        <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/60"><i data-lucide="layers" class="w-5 h-5"></i></div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Kategori Aktif</p>
+          <p id="kpi-total-categories" class="text-2xl sm:text-3xl font-bold text-soga-800 mt-1">0</p>
+          <p class="text-xs text-stone-400 mt-1">Jenis wastra & busana</p>
+        </div>
+        <div class="p-3 rounded-xl bg-soga-100 text-soga-700 border border-soga-200"><i data-lucide="tags" class="w-5 h-5"></i></div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Produk Unggulan</p>
+          <p id="kpi-total-featured" class="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">0</p>
+          <p class="text-xs text-stone-400 mt-1">Sorotan etalase utama</p>
+        </div>
+        <div class="p-3 rounded-xl bg-amber-50 text-amber-600 border border-amber-200/60"><i data-lucide="star" class="w-5 h-5"></i></div>
+      </div>
+    </div>
+
+    <!-- Tabel Manajemen Produk -->
+    <div class="bg-white rounded-2xl border border-soga-200/80 shadow-sm overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-soga-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <h3 class="font-serif text-lg font-bold text-soga-950">Daftar Inventaris Produk</h3>
+        <div class="relative w-full sm:w-72">
+          <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input type="text" id="admin-search" oninput="renderAdminDashboard()"
+            placeholder="Filter nama/kategori di tabel..."
+            class="w-full pl-9 pr-3 py-2 bg-soga-50 border border-soga-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40" />
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-soga-50/80 border-b border-soga-200 text-[11px] font-bold uppercase tracking-wider text-stone-500">
+              <th class="py-3.5 px-4">Produk</th>
+              <th class="py-3.5 px-4">Kategori</th>
+              <th class="py-3.5 px-4">Harga (IDR)</th>
+              <th class="py-3.5 px-4 text-center">Stok Cepat</th>
+              <th class="py-3.5 px-4 text-center">Unggulan</th>
+              <th class="py-3.5 px-4 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body" class="divide-y divide-soga-100 text-sm"></tbody>
+        </table>
+      </div>
+
+      <div id="admin-empty-state" class="hidden py-12 text-center text-sm text-stone-500">Belum ada data produk yang sesuai.</div>
+    </div>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- FOOTER                                                                -->
+  <!-- ===================================================================== -->
+  <footer class="bg-soga-950 text-soga-300 border-t border-amber-500/20 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="font-serif font-bold text-amber-400 text-base">BatikWangi</span>
+        <span>•</span>
+        <span>Etalase Digital UMKM Batik & Kebaya Banyuwangi</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="openWhatsAppConfigModal()" class="text-emerald-400 hover:underline flex items-center gap-1 font-medium">
+          <i data-lucide="phone" class="w-3.5 h-3.5"></i> Ganti Nomor WhatsApp Penjual
+        </button>
+        <span class="text-soga-600">|</span>
+        <span class="text-soga-400">localStorage • Tanpa Backend</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: DETAIL PRODUK & PESAN WHATSAPP                               -->
+  <!-- ===================================================================== -->
+  <div id="product-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl border border-soga-200">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="bg-soga-100 relative aspect-square md:aspect-auto flex items-center justify-center p-4">
+          <img id="detail-img" src="" alt="Preview Batik" class="w-full h-full object-cover rounded-xl shadow-sm" />
+          <span id="detail-featured-badge" class="hidden absolute top-6 left-6 px-3 py-1 rounded-full bg-amber-500 text-soga-950 text-xs font-bold shadow">★ Unggulan</span>
+        </div>
+
+        <div class="p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-start justify-between gap-2">
+              <span id="detail-category" class="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">Kategori</span>
+              <button onclick="closeModal('product-detail-modal')" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100 hover:text-stone-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <h3 id="detail-name" class="font-serif text-2xl font-bold text-soga-950 mt-3 leading-snug">Nama Produk</h3>
+            <p id="detail-price" class="text-xl font-bold text-amber-700 mt-1.5">Rp 0</p>
+            <div class="mt-3 flex items-center gap-2 text-xs"><span id="detail-stock-badge" class="px-2.5 py-1 rounded-full font-semibold">Stok: 0</span></div>
+            <p id="detail-desc" class="mt-4 text-sm text-stone-600 leading-relaxed">Deskripsi lengkap produk...</p>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-soga-100">
+            <div id="detail-qty-wrapper" class="flex items-center justify-between mb-4">
+              <span class="text-xs font-semibold text-stone-600">Jumlah Pesanan:</span>
+              <div class="flex items-center border border-soga-300 rounded-xl overflow-hidden">
+                <button type="button" onclick="adjustOrderQty(-1)" class="px-3 py-1.5 bg-soga-50 hover:bg-soga-100 font-bold text-stone-700">-</button>
+                <input type="number" id="detail-qty" value="1" min="1" readonly class="w-12 text-center text-sm font-bold text-stone-800 bg-white focus:outline-none" />
+                <button type="button" onclick="adjustOrderQty(1)" class="px-3 py-1.5 bg-soga-50 hover:bg-soga-100 font-bold text-stone-700">+</button>
+              </div>
+            </div>
+
+            <a id="detail-wa-btn" href="#" target="_blank" rel="noopener noreferrer"
+              class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md transition">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Pesan via WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: KONFIGURASI NOMOR WHATSAPP PENJUAL                           -->
+  <!-- ===================================================================== -->
+  <div id="whatsapp-config-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-soga-200">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+            <i data-lucide="phone" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-serif text-xl font-bold text-soga-950">Ganti No. WhatsApp Penjual</h3>
+        </div>
+        <button onclick="closeModal('whatsapp-config-modal')" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveWhatsApp(event)" class="mt-4 space-y-4">
+        <div>
+          <label for="config-wa-input" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nomor WhatsApp Tujuan *</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 font-bold text-sm">+</span>
+            <input type="text" id="config-wa-input" required placeholder="6281234567890"
+              class="w-full pl-8 pr-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm font-semibold text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+          </div>
+          <p class="text-[11px] text-stone-500 mt-1.5">Gunakan format internasional tanpa tanda plus (+), contoh: <code class="text-emerald-700 font-bold">6281234567890</code>. Tersimpan otomatis di browser.</p>
+        </div>
+
+        <div class="pt-3 border-t border-soga-100 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeModal('whatsapp-config-modal')" class="px-4 py-2.5 rounded-xl border border-soga-200 text-stone-600 hover:bg-soga-50 text-sm font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm transition">Simpan Nomor WA</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 3: FORM TAMBAH / EDIT PRODUK                                    -->
+  <!-- ===================================================================== -->
+  <div id="product-form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-soga-200 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h3 id="form-modal-title" class="font-serif text-xl font-bold text-soga-950">Tambah Produk Baru</h3>
+        <button onclick="closeModal('product-form-modal')" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="product-form" onsubmit="handleSaveProduct(event)" class="mt-4 space-y-4">
+        <input type="hidden" id="form-id" />
+        <div>
+          <label for="form-name" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nama Produk *</label>
+          <input type="text" id="form-name" required maxlength="80" placeholder="Contoh: Batik Tulis Gajah Oling Sekar"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="form-category" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Kategori *</label>
+            <select id="form-category" required
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="Batik Tulis">Batik Tulis</option>
+              <option value="Batik Cap">Batik Cap</option>
+              <option value="Kebaya">Kebaya</option>
+              <option value="Aksesoris & Bawahan">Aksesoris & Bawahan</option>
+            </select>
+          </div>
+          <div class="flex items-center sm:pt-6">
+            <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+              <input type="checkbox" id="form-featured" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 border-soga-300" />
+              <span class="text-sm font-semibold text-stone-700">Jadikan Produk Unggulan</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="form-price" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Harga (Rupiah) *</label>
+            <input type="number" id="form-price" required min="0" step="1000" placeholder="250000"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+          <div>
+            <label for="form-stock" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Stok (Integer >= 0) *</label>
+            <input type="number" id="form-stock" required min="0" step="1" placeholder="10"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+        </div>
+
+        <div>
+          <label for="form-svg-preset" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Ilustrasi Motif Lokal (SVG Tanpa Hak Cipta)</label>
+          <div class="flex items-center gap-3">
+            <img id="form-svg-preview" src="" alt="Preview Motif" class="w-14 h-14 rounded-xl border border-soga-200 object-cover bg-soga-100 shrink-0" />
+            <select id="form-svg-preset" onchange="updateFormSvgPreview()"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="gajah-oling">Motif Gajah Oling (Soga Emas)</option>
+              <option value="paras-gempal">Motif Paras Gempal (Terakota)</option>
+              <option value="kangkung-setingkes">Motif Kangkung Setingkes (Zamrud)</option>
+              <option value="kebaya-osing">Ilustrasi Kebaya Osing (Hitam Emas)</option>
+              <option value="kebaya-gandrung">Ilustrasi Kebaya Gandrung (Merah Marun)</option>
+              <option value="sekar-jagad">Motif Sekar Jagad Blambangan (Nila)</option>
+              <option value="kopi-pecah">Motif Kopi Pecah Banyuwangi (Cokelat Kopi)</option>
+              <option value="sembruk-cacing">Motif Sembruk Cacing (Klasik Soga)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="form-desc" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Deskripsi Produk *</label>
+          <textarea id="form-desc" rows="3" required maxlength="300" placeholder="Jelaskan filosofi motif, bahan kain, dan ukuran..."
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-soga-100 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeModal('product-form-modal')" class="px-4 py-2.5 rounded-xl border border-soga-200 text-stone-600 hover:bg-soga-50 text-sm font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-sm transition">Simpan Produk</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 4: KONFIRMASI AKSI                                              -->
+  <!-- ===================================================================== -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-soga-200">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-4"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
+      <h3 id="confirm-title" class="font-serif text-xl font-bold text-stone-900">Konfirmasi Aksi</h3>
+      <p id="confirm-message" class="text-sm text-stone-600 mt-1.5 leading-relaxed">Apakah Anda yakin?</p>
+      <div class="mt-6 flex items-center justify-end gap-2.5">
+        <button onclick="closeModal('confirm-modal')" class="px-4 py-2 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 text-sm font-semibold">Batal</button>
+        <button id="confirm-yes-btn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-sm">Ya, Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 5: SPEC.md                                                      -->
+  <!-- ===================================================================== -->
+  <div id="spec-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/75 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-soga-200">
+      <div class="px-6 py-4 border-b border-soga-200 flex items-center justify-between bg-soga-950 text-soga-50 rounded-t-2xl">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i>
+          <h3 class="font-serif text-lg font-bold">SPEC.md — Spesifikasi Sistem BatikWangi</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="copySpecMarkdown()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-soga-950 text-xs font-bold flex items-center gap-1.5 transition">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Markdown
+          </button>
+          <button onclick="closeModal('spec-modal')" class="p-1.5 rounded-lg text-soga-300 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto text-sm text-stone-700 space-y-5 leading-relaxed" id="spec-content-render"></div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT LOGIC                                                      -->
+  <!-- ===================================================================== -->
+  <script>
+    function createBatikSvgDataUri(presetKey) {
+      const presets = {
+        'gajah-oling': {
+          bg: '#2c1810', accent: '#f59e0b', sub: '#d97706', label: 'GAJAH OLING',
+          pattern: `<path d="M30 50 C15 50 15 25 35 25 C50 25 50 45 35 45 C28 45 28 35 35 35" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round"/><circle cx="52" cy="22" r="3" fill="#fde68a"/><circle cx="18" cy="55" r="2.5" fill="#d97706"/>`
+        },
+        'paras-gempal': {
+          bg: '#4a1d1f', accent: '#fbbf24', sub: '#f87171', label: 'PARAS GEMPAL',
+          pattern: `<polygon points="35,10 60,35 35,60 10,35" fill="none" stroke="#fbbf24" stroke-width="2.5"/><polygon points="35,20 50,35 35,50 20,35" fill="none" stroke="#f87171" stroke-width="2"/><circle cx="35" cy="35" r="4" fill="#fbbf24"/>`
+        },
+        'kangkung-setingkes': {
+          bg: '#0f2e26', accent: '#34d399', sub: '#fbbf24', label: 'KANGKUNG SETINGKES',
+          pattern: `<path d="M10 60 Q35 35 60 10 M10 10 Q35 35 60 60" stroke="#34d399" stroke-width="2.5" fill="none"/><ellipse cx="35" cy="22" rx="5" ry="9" fill="none" stroke="#fbbf24" stroke-width="2"/><ellipse cx="35" cy="48" rx="5" ry="9" fill="none" stroke="#fbbf24" stroke-width="2"/>`
+        },
+        'kebaya-osing': {
+          bg: '#1c1917', accent: '#eab308', sub: '#a8a29e', label: 'KEBAYA OSING',
+          pattern: `<path d="M22 15 L35 28 L48 15 L56 25 L50 58 L20 58 L14 25 Z" fill="none" stroke="#eab308" stroke-width="2.5"/><line x1="35" y1="28" x2="35" y2="58" stroke="#fde047" stroke-width="2" stroke-dasharray="3 3"/>`
+        },
+        'kebaya-gandrung': {
+          bg: '#500724', accent: '#fda4af', sub: '#fbbf24', label: 'KEBAYA GANDRUNG',
+          pattern: `<path d="M20 18 Q35 32 50 18 L55 56 L15 56 Z" fill="none" stroke="#fbbf24" stroke-width="2.5"/><circle cx="35" cy="38" r="7" fill="none" stroke="#fda4af" stroke-width="2"/>`
+        },
+        'sekar-jagad': {
+          bg: '#172554', accent: '#60a5fa', sub: '#fbbf24', label: 'SEKAR JAGAD',
+          pattern: `<circle cx="35" cy="35" r="22" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="6 3"/><circle cx="35" cy="35" r="10" fill="none" stroke="#60a5fa" stroke-width="2.5"/>`
+        },
+        'kopi-pecah': {
+          bg: '#3b2314', accent: '#d6a87c', sub: '#f59e0b', label: 'KOPI PECAH',
+          pattern: `<ellipse cx="35" cy="35" rx="14" ry="20" transform="rotate(-25 35 35)" fill="none" stroke="#d6a87c" stroke-width="2.5"/><path d="M27 22 Q37 35 43 48" stroke="#f59e0b" stroke-width="2" fill="none"/>`
+        },
+        'sembruk-cacing': {
+          bg: '#3f2e1d', accent: '#fcd34d', sub: '#d97706', label: 'SEMBRUK CACING',
+          pattern: `<path d="M12 25 C22 12, 32 38, 42 25 C52 12, 58 32, 62 25" fill="none" stroke="#fcd34d" stroke-width="2.5" stroke-linecap="round"/><path d="M12 48 C22 35, 32 60, 42 48 C52 35, 58 55, 62 48" fill="none" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>`
+        }
+      };
+
+      const item = presets[presetKey] || presets['gajah-oling'];
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="400" height="320" viewBox="0 0 400 320">
+          <defs><pattern id="motif" width="70" height="70" patternUnits="userSpaceOnUse"><rect width="70" height="70" fill="${item.bg}"/>${item.pattern}</pattern></defs>
+          <rect width="400" height="320" fill="url(#motif)"/><rect width="400" height="320" fill="url(#motif)" opacity="0.25"/>
+          <rect x="0" y="255" width="400" height="65" fill="rgba(15, 10, 8, 0.82)"/>
+          <line x1="24" y1="255" x2="376" y2="255" stroke="${item.accent}" stroke-width="1.5" stroke-opacity="0.6"/>
+          <text x="200" y="284" font-family="Georgia, serif" font-size="15" font-weight="bold" fill="${item.accent}" text-anchor="middle" letter-spacing="3">${item.label}</text>
+          <text x="200" y="303" font-family="sans-serif" font-size="10" fill="#e7e5e4" text-anchor="middle" letter-spacing="1.5">WASRA KHAS BANYUWANGI</text>
+        </svg>`.trim();
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    const INITIAL_PRODUCTS = [
+      { id: 'bw-001', nama: 'Batik Tulis Gajah Oling Klasik', kategori: 'Batik Tulis', harga: 485000, stok: 6, deskripsi: 'Kain batik tulis tangan motif ikonik Gajah Oling dengan pewarnaan soga alam. Ukuran 215 x 115 cm.', preset: 'gajah-oling', imageUrl: createBatikSvgDataUri('gajah-oling'), unggulan: true },
+      { id: 'bw-002', nama: 'Kebaya Kutubaru Osing Beludru', kategori: 'Kebaya', harga: 375000, stok: 8, deskripsi: 'Kebaya tradisional masyarakat suku Osing dengan potongan kutubaru elegan dan aksen bordir emas.', preset: 'kebaya-osing', imageUrl: createBatikSvgDataUri('kebaya-osing'), unggulan: true },
+      { id: 'bw-003', nama: 'Batik Cap Paras Gempal Terakota', kategori: 'Batik Cap', harga: 195000, stok: 14, deskripsi: 'Motif Paras Gempal melambangkan keteguhan hati masyarakat Blambangan.', preset: 'paras-gempal', imageUrl: createBatikSvgDataUri('paras-gempal'), unggulan: false },
+      { id: 'bw-004', nama: 'Kebaya Encim Gandrung Merah Marun', kategori: 'Kebaya', harga: 420000, stok: 4, deskripsi: 'Terinspirasi dari keanggunan penari Gandrung Banyuwangi dengan bordir kerancang.', preset: 'kebaya-gandrung', imageUrl: createBatikSvgDataUri('kebaya-gandrung'), unggulan: true },
+      { id: 'bw-005', nama: 'Batik Kangkung Setingkes Zamrud', kategori: 'Batik Tulis', harga: 450000, stok: 5, deskripsi: 'Filosofi ikatan kangkung menyatu melambangkan kerukunan dan persaudaraan.', preset: 'kangkung-setingkes', imageUrl: createBatikSvgDataUri('kangkung-setingkes'), unggulan: false },
+      { id: 'bw-006', nama: 'Selendang Batik Sekar Jagad Blambangan', kategori: 'Aksesoris & Bawahan', harga: 145000, stok: 18, deskripsi: 'Selendang wastra serbaguna perpaduan ragam motif pesisir. Ukuran 200 x 55 cm.', preset: 'sekar-jagad', imageUrl: createBatikSvgDataUri('sekar-jagad'), unggulan: false },
+      { id: 'bw-007', nama: 'Kain Batik Cap Kopi Pecah Kemiren', kategori: 'Batik Cap', harga: 215000, stok: 11, deskripsi: 'Terinspirasi dari tradisi kopi Desa Adat Kemiren. Nuansa cokelat kopi panggang.', preset: 'kopi-pecah', imageUrl: createBatikSvgDataUri('kopi-pecah'), unggulan: true },
+      { id: 'bw-008', nama: 'Rok Lilit Batik Sembruk Cacing', kategori: 'Aksesoris & Bawahan', harga: 175000, stok: 0, deskripsi: 'Rok lilit instan motif klasik Sembruk Cacing dengan tali fleksibel all-size.', preset: 'sembruk-cacing', imageUrl: createBatikSvgDataUri('sembruk-cacing'), unggulan: false }
+    ];
+
+    const STORAGE_KEY_PRODUCTS = 'batikwangi_products_v3';
+    const STORAGE_KEY_WHATSAPP = 'batikwangi_whatsapp_v3';
+    const DEFAULT_WHATSAPP = '6281234567890';
+
+    let products = [];
+    let sellerWhatsApp = DEFAULT_WHATSAPP;
+    let quickFilters = { featured: false, instock: false };
+    let selectedDetailProduct = null;
+
+    function loadAppData() {
+      try {
+        const savedWa = localStorage.getItem(STORAGE_KEY_WHATSAPP);
+        if (savedWa) sellerWhatsApp = savedWa;
+      } catch (e) {}
+
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            products = parsed;
+            return;
+          }
+        }
+      } catch (e) {}
+
+      products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
+      saveProducts();
+    }
+
+    function saveProducts() {
+      try { localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products)); } catch (e) {}
+    }
+
+    function saveWhatsAppNumber(newNumber) {
+      sellerWhatsApp = newNumber.replace(/\D/g, '');
+      try { localStorage.setItem(STORAGE_KEY_WHATSAPP, sellerWhatsApp); } catch (e) {}
+    }
+
+    function formatRupiah(angka) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(angka);
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = type === 'error' ? 'bg-rose-900 text-rose-50 border-rose-500/40' : 'bg-soga-950 text-amber-300 border-amber-500/40';
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-xl text-xs sm:text-sm font-medium flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0 ${colors}`;
+      toast.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle-2'}" class="w-4 h-4 shrink-0"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+      requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 2800);
+    }
+
+    function openModal(id) {
+      const m = document.getElementById(id);
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function switchMode(mode) {
+      const viewBuyer = document.getElementById('view-buyer');
+      const viewAdmin = document.getElementById('view-admin');
+      const tabBuyer = document.getElementById('tab-buyer');
+      const tabAdmin = document.getElementById('tab-admin');
+
+      if (mode === 'buyer') {
+        viewBuyer.classList.remove('hidden');
+        viewAdmin.classList.add('hidden');
+        tabBuyer.className = 'flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 bg-amber-500 text-soga-950 shadow-sm';
+        tabAdmin.className = 'flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 text-soga-200 hover:text-white';
+        renderBuyerCatalog();
+      } else {
+        viewBuyer.classList.add('hidden');
+        viewAdmin.classList.remove('hidden');
+        tabAdmin.className = 'flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 bg-amber-500 text-soga-950 shadow-sm';
+        tabBuyer.className = 'flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 text-soga-200 hover:text-white';
+        renderAdminDashboard();
+      }
+      lucide.createIcons();
+    }
+
+    function openWhatsAppConfigModal() {
+      document.getElementById('config-wa-input').value = sellerWhatsApp;
+      openModal('whatsapp-config-modal');
+    }
+
+    function handleSaveWhatsApp(event) {
+      event.preventDefault();
+      const val = document.getElementById('config-wa-input').value.trim();
+      const cleaned = val.replace(/\D/g, '');
+      if (cleaned.length < 9) {
+        showToast('Nomor WhatsApp tidak valid. Minimal 9 digit.', 'error');
+        return;
+      }
+      saveWhatsAppNumber(cleaned);
+      closeModal('whatsapp-config-modal');
+      showToast(`Nomor WhatsApp penjual diperbarui ke +${cleaned}`);
+      if (!document.getElementById('view-admin').classList.contains('hidden')) {
+        renderAdminDashboard();
+      }
+    }
+
+    function toggleQuickFilter(key) {
+      quickFilters[key] = !quickFilters[key];
+      const chip = document.getElementById(`chip-${key}`);
+      if (quickFilters[key]) {
+        chip.classList.add('bg-amber-100', 'border-amber-500', 'text-soga-950');
+        chip.classList.remove('bg-soga-50', 'text-stone-700');
+      } else {
+        chip.classList.remove('bg-amber-100', 'border-amber-500', 'text-soga-950');
+        chip.classList.add('bg-soga-50', 'text-stone-700');
+      }
+      renderBuyerCatalog();
+    }
+
+    function clearBuyerSearch() {
+      document.getElementById('buyer-search').value = '';
+      renderBuyerCatalog();
+    }
+
+    function resetAllBuyerFilters() {
+      document.getElementById('buyer-search').value = '';
+      document.getElementById('buyer-category').value = 'ALL';
+      document.getElementById('buyer-sort').value = 'default';
+      quickFilters = { featured: false, instock: false };
+      ['featured', 'instock'].forEach(k => {
+        const chip = document.getElementById(`chip-${k}`);
+        chip.classList.remove('bg-amber-100', 'border-amber-500', 'text-soga-950');
+        chip.classList.add('bg-soga-50', 'text-stone-700');
+      });
+      renderBuyerCatalog();
+    }
+
+    function buildWhatsAppUrl(product, qty = 1) {
+      const total = product.harga * qty;
+      const text = `Halo BatikWangi Banyuwangi, saya tertarik memesan produk berikut:\n\n` +
+        `• Produk: *${product.nama}*\n` +
+        `• Kategori: ${product.kategori}\n` +
+        `• Harga Satuan: ${formatRupiah(product.harga)}\n` +
+        `• Jumlah: ${qty} pcs\n` +
+        `• Estimasi Total: *${formatRupiah(total)}*\n\n` +
+        `Apakah stok masih tersedia? Terima kasih.`;
+      return `https://wa.me/${sellerWhatsApp}?text=${encodeURIComponent(text)}`;
+    }
+
+    function renderBuyerCatalog() {
+      const searchVal = document.getElementById('buyer-search').value.trim().toLowerCase();
+      const categoryVal = document.getElementById('buyer-category').value;
+      const sortVal = document.getElementById('buyer-sort').value;
+
+      document.getElementById('clear-search-btn').classList.toggle('hidden', searchVal.length === 0);
+
+      let filtered = products.filter(p => {
+        const matchSearch = p.nama.toLowerCase().includes(searchVal) || p.deskripsi.toLowerCase().includes(searchVal);
+        const matchCategory = categoryVal === 'ALL' || p.kategori === categoryVal;
+        const matchFeatured = !quickFilters.featured || p.unggulan;
+        const matchStock = !quickFilters.instock || p.stok > 0;
+        return matchSearch && matchCategory && matchFeatured && matchStock;
+      });
+
+      if (sortVal === 'price-asc') filtered.sort((a, b) => a.harga - b.harga);
+      else if (sortVal === 'price-desc') filtered.sort((a, b) => b.harga - a.harga);
+      else if (sortVal === 'name-asc') filtered.sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
+      else filtered.sort((a, b) => (b.unggulan === a.unggulan ? 0 : b.unggulan ? 1 : -1));
+
+      document.getElementById('buyer-result-count').textContent = `Menampilkan ${filtered.length} dari ${products.length} produk`;
+
+      const grid = document.getElementById('buyer-product-grid');
+      const emptyState = document.getElementById('buyer-empty-state');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        lucide.createIcons();
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = filtered.map(p => {
+        const isOutOfStock = p.stok <= 0;
+        const waUrl = buildWhatsAppUrl(p, 1);
+
+        return `
+          <article class="group bg-white rounded-2xl border border-soga-200/80 shadow-sm hover:shadow-xl hover:border-amber-400/60 transition-all duration-300 flex flex-col overflow-hidden">
+            <div class="relative aspect-[5/4] bg-soga-100 overflow-hidden cursor-pointer" onclick="openProductDetail('${p.id}')">
+              <img src="${p.imageUrl}" alt="${p.nama}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-75' : ''}" />
+              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                ${p.unggulan ? `<span class="px-2.5 py-1 rounded-full bg-amber-500 text-soga-950 text-[11px] font-bold shadow-sm flex items-center gap-1"><i data-lucide="award" class="w-3 h-3"></i> Unggulan</span>` : ''}
+              </div>
+              <div class="absolute bottom-3 right-3">
+                ${isOutOfStock ? `<span class="px-2.5 py-1 rounded-lg bg-rose-950/90 text-rose-200 text-[11px] font-bold backdrop-blur-sm">Stok Habis</span>` : `<span class="px-2.5 py-1 rounded-lg bg-stone-950/80 text-emerald-300 text-[11px] font-semibold backdrop-blur-sm">Stok: ${p.stok}</span>`}
+              </div>
+            </div>
+            <div class="p-5 flex-1 flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700">${p.kategori}</span>
+                <h3 onclick="openProductDetail('${p.id}')" class="font-serif text-lg font-bold text-soga-950 mt-1 line-clamp-1 cursor-pointer group-hover:text-amber-700 transition">${p.nama}</h3>
+                <p class="text-xs text-stone-500 mt-1.5 line-clamp-2 leading-relaxed">${p.deskripsi}</p>
+              </div>
+              <div class="mt-4 pt-3.5 border-t border-soga-100">
+                <div class="flex items-baseline justify-between mb-3">
+                  <span class="text-xs text-stone-400">Harga</span>
+                  <span class="text-base sm:text-lg font-bold text-soga-950">${formatRupiah(p.harga)}</span>
+                </div>
+                <div class="grid grid-cols-5 gap-2">
+                  <button onclick="openProductDetail('${p.id}')" class="col-span-2 py-2 px-2.5 rounded-xl border border-soga-200 hover:bg-soga-50 text-stone-700 text-xs font-semibold transition flex items-center justify-center gap-1">
+                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> Detail
+                  </button>
+                  ${isOutOfStock ? `
+                    <button disabled class="col-span-3 py-2 px-3 rounded-xl bg-stone-200 text-stone-400 text-xs font-semibold cursor-not-allowed flex items-center justify-center gap-1.5">
+                      <i data-lucide="slash" class="w-3.5 h-3.5"></i> Habis
+                    </button>
+                  ` : `
+                    <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="col-span-3 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition flex items-center justify-center gap-1.5">
+                      <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Pesan WA
+                    </a>
+                  `}
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openProductDetail(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      selectedDetailProduct = product;
+      document.getElementById('detail-img').src = product.imageUrl;
+      document.getElementById('detail-category').textContent = product.kategori;
+      document.getElementById('detail-name').textContent = product.nama;
+      document.getElementById('detail-price').textContent = formatRupiah(product.harga);
+      document.getElementById('detail-desc').textContent = product.deskripsi;
+      document.getElementById('detail-featured-badge').classList.toggle('hidden', !product.unggulan);
+
+      const stockBadge = document.getElementById('detail-stock-badge');
+      const qtyWrapper = document.getElementById('detail-qty-wrapper');
+      const waBtn = document.getElementById('detail-wa-btn');
+      document.getElementById('detail-qty').value = 1;
+
+      if (product.stok > 0) {
+        stockBadge.textContent = `Tersedia (${product.stok} unit)`;
+        stockBadge.className = 'px-2.5 py-1 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        qtyWrapper.classList.remove('hidden');
+        waBtn.classList.remove('pointer-events-none', 'bg-stone-300', 'text-stone-500');
+        waBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white');
+        waBtn.href = buildWhatsAppUrl(product, 1);
+      } else {
+        stockBadge.textContent = 'Stok Habis';
+        stockBadge.className = 'px-2.5 py-1 rounded-full font-semibold bg-rose-50 text-rose-700 border border-rose-200';
+        qtyWrapper.classList.add('hidden');
+        waBtn.classList.add('pointer-events-none', 'bg-stone-300', 'text-stone-500');
+        waBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white');
+        waBtn.removeAttribute('href');
+      }
+
+      openModal('product-detail-modal');
+      lucide.createIcons();
+    }
+
+    function adjustOrderQty(delta) {
+      if (!selectedDetailProduct || selectedDetailProduct.stok <= 0) return;
+      const input = document.getElementById('detail-qty');
+      let current = parseInt(input.value, 10) || 1;
+      current = Math.max(1, Math.min(selectedDetailProduct.stok, current + delta));
+      input.value = current;
+      document.getElementById('detail-wa-btn').href = buildWhatsAppUrl(selectedDetailProduct, current);
+    }
+
+    function renderAdminDashboard() {
+      document.getElementById('admin-display-wa').textContent = '+' + sellerWhatsApp;
+      document.getElementById('kpi-total-products').textContent = products.length;
+      document.getElementById('kpi-total-stock').textContent = products.reduce((sum, p) => sum + (Number(p.stok) || 0), 0);
+      document.getElementById('kpi-total-categories').textContent = new Set(products.map(p => p.kategori)).size;
+      document.getElementById('kpi-total-featured').textContent = products.filter(p => p.unggulan).length;
+
+      const query = document.getElementById('admin-search').value.trim().toLowerCase();
+      const filtered = products.filter(p => p.nama.toLowerCase().includes(query) || p.kategori.toLowerCase().includes(query));
+
+      const tbody = document.getElementById('admin-table-body');
+      const emptyState = document.getElementById('admin-empty-state');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      tbody.innerHTML = filtered.map(p => `
+        <tr class="hover:bg-soga-50/70 transition">
+          <td class="py-3.5 px-4">
+            <div class="flex items-center gap-3">
+              <img src="${p.imageUrl}" alt="${p.nama}" class="w-11 h-11 rounded-xl object-cover border border-soga-200 shrink-0" />
+              <div>
+                <p class="font-bold text-soga-950 line-clamp-1">${p.nama}</p>
+                <p class="text-xs text-stone-400 line-clamp-1 max-w-xs">${p.deskripsi}</p>
+              </div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md bg-soga-100 text-soga-800 text-xs font-semibold whitespace-nowrap">${p.kategori}</span></td>
+          <td class="py-3.5 px-4 font-semibold text-stone-800 whitespace-nowrap">${formatRupiah(p.harga)}</td>
+          <td class="py-3.5 px-4">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="quickAdjustStock('${p.id}', -1)" class="w-7 h-7 rounded-lg border border-soga-200 hover:bg-soga-100 text-stone-700 font-bold flex items-center justify-center">-</button>
+              <span class="w-9 text-center font-bold text-xs ${p.stok === 0 ? 'text-rose-600' : 'text-emerald-700'}">${p.stok}</span>
+              <button onclick="quickAdjustStock('${p.id}', 1)" class="w-7 h-7 rounded-lg border border-soga-200 hover:bg-soga-100 text-stone-700 font-bold flex items-center justify-center">+</button>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 text-center">
+            <button onclick="toggleFeaturedStatus('${p.id}')" class="p-1.5 rounded-lg transition ${p.unggulan ? 'bg-amber-100 text-amber-600' : 'bg-stone-100 text-stone-400 hover:text-stone-600'}">
+              <i data-lucide="star" class="w-4 h-4 ${p.unggulan ? 'fill-amber-500' : ''}"></i>
+            </button>
+          </td>
+          <td class="py-3.5 px-4 text-right whitespace-nowrap">
+            <div class="inline-flex items-center gap-1.5">
+              <button onclick="openProductFormModal('${p.id}')" class="p-2 rounded-lg bg-soga-100 hover:bg-amber-100 text-soga-800 transition"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+              <button onclick="confirmDeleteProduct('${p.id}')" class="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function quickAdjustStock(id, delta) {
+      const idx = products.findIndex(p => p.id === id);
+      if (idx === -1) return;
+      products[idx].stok = Math.max(0, (Number(products[idx].stok) || 0) + delta);
+      saveProducts();
+      renderAdminDashboard();
+    }
+
+    function toggleFeaturedStatus(id) {
+      const idx = products.findIndex(p => p.id === id);
+      if (idx === -1) return;
+      products[idx].unggulan = !products[idx].unggulan;
+      saveProducts();
+      renderAdminDashboard();
+      showToast(`Status unggulan "${products[idx].nama}" diperbarui.`);
+    }
+
+    function updateFormSvgPreview() {
+      const preset = document.getElementById('form-svg-preset').value;
+      document.getElementById('form-svg-preview').src = createBatikSvgDataUri(preset);
+    }
+
+    function openProductFormModal(editId = null) {
+      document.getElementById('product-form').reset();
+      if (editId) {
+        const p = products.find(item => item.id === editId);
+        if (!p) return;
+        document.getElementById('form-modal-title').textContent = 'Edit Produk';
+        document.getElementById('form-id').value = p.id;
+        document.getElementById('form-name').value = p.nama;
+        document.getElementById('form-category').value = p.kategori;
+        document.getElementById('form-price').value = p.harga;
+        document.getElementById('form-stock').value = p.stok;
+        document.getElementById('form-featured').checked = Boolean(p.unggulan);
+        document.getElementById('form-svg-preset').value = p.preset || 'gajah-oling';
+        document.getElementById('form-desc').value = p.deskripsi;
+      } else {
+        document.getElementById('form-modal-title').textContent = 'Tambah Produk Baru';
+        document.getElementById('form-id').value = '';
+        document.getElementById('form-svg-preset').value = 'gajah-oling';
+      }
+      updateFormSvgPreview();
+      openModal('product-form-modal');
+    }
+
+    function handleSaveProduct(event) {
+      event.preventDefault();
+      const id = document.getElementById('form-id').value.trim();
+      const nama = document.getElementById('form-name').value.trim();
+      const kategori = document.getElementById('form-category').value;
+      const harga = Number(document.getElementById('form-price').value);
+      const stok = parseInt(document.getElementById('form-stock').value, 10);
+      const unggulan = document.getElementById('form-featured').checked;
+      const preset = document.getElementById('form-svg-preset').value;
+      const deskripsi = document.getElementById('form-desc').value.trim();
+
+      if (!nama || !deskripsi) { showToast('Nama produk dan deskripsi wajib diisi.', 'error'); return; }
+      if (isNaN(harga) || harga < 0) { showToast('Harga harus angka >= 0.', 'error'); return; }
+      if (isNaN(stok) || stok < 0 || !Number.isInteger(stok)) { showToast('Stok harus bilangan bulat >= 0.', 'error'); return; }
+
+      const imageUrl = createBatikSvgDataUri(preset);
+
+      if (id) {
+        const idx = products.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          products[idx] = { ...products[idx], nama, kategori, harga, stok, deskripsi, preset, imageUrl, unggulan };
+          showToast('Produk berhasil diperbarui.');
+        }
+      } else {
+        products.unshift({ id: 'bw-' + Date.now(), nama, kategori, harga, stok, deskripsi, preset, imageUrl, unggulan });
+        showToast('Produk baru berhasil ditambahkan.');
+      }
+
+      saveProducts();
+      closeModal('product-form-modal');
+      renderAdminDashboard();
+    }
+
+    function confirmDeleteProduct(id) {
+      const p = products.find(item => item.id === id);
+      if (!p) return;
+      document.getElementById('confirm-title').textContent = 'Hapus Produk?';
+      document.getElementById('confirm-message').textContent = `Produk "${p.nama}" akan dihapus dari katalog.`;
+      document.getElementById('confirm-yes-btn').onclick = () => {
+        products = products.filter(item => item.id !== id);
+        saveProducts();
+        closeModal('confirm-modal');
+        renderAdminDashboard();
+        showToast('Produk berhasil dihapus.');
+      };
+      openModal('confirm-modal');
+    }
+
+    function confirmResetData() {
+      document.getElementById('confirm-title').textContent = 'Reset Data Contoh?';
+      document.getElementById('confirm-message').textContent = 'Semua perubahan produk dan nomor WhatsApp akan dikembalikan ke pengaturan awal.';
+      document.getElementById('confirm-yes-btn').onclick = () => {
+        products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
+        sellerWhatsApp = DEFAULT_WHATSAPP;
+        saveProducts();
+        try { localStorage.removeItem(STORAGE_KEY_WHATSAPP); } catch(e){}
+        closeModal('confirm-modal');
+        renderAdminDashboard();
+        showToast('Data berhasil direset.');
+      };
+      openModal('confirm-modal');
+    }
+
+    const SPEC_MARKDOWN_TEXT = `# SPEC.md — BatikWangi (Katalog & Dashboard UMKM Batik & Kebaya Banyuwangi)
+
+## 1. Tujuan (Objectives)
+Membangun aplikasi web **BatikWangi** berbasis single-page untuk etalase digital dan manajemen inventaris sederhana bagi UMKM batik dan kebaya khas Banyuwangi dengan fitur kustomisasi nomor WhatsApp penjual.
+
+## 2. Fitur Utama
+- **Katalog Pembeli Interaktif:** Menampilkan wastra lokal, pencarian real-time, filter kategori, dan tombol pesan langsung via \`wa.me\` dengan format otomatis.
+- **Pengaturan Nomor WhatsApp Penjual:** Admin dapat mengubah nomor WhatsApp tujuan pesanan kapan saja dan tersimpan secara persisten di \`localStorage\`.
+- **Dashboard Pengelola (CRUD):** Kelola produk, tambah/edit/hapus, atur stok dan status unggulan secara instan.`;
+
+    function openSpecModal() {
+      document.getElementById('spec-content-render').innerHTML = `<pre class="whitespace-pre-wrap font-sans text-xs sm:text-sm text-stone-700 leading-relaxed bg-soga-50 p-4 rounded-xl border border-soga-200">${SPEC_MARKDOWN_TEXT}</pre>`;
+      openModal('spec-modal');
+      lucide.createIcons();
+    }
+
+    function copySpecMarkdown() {
+      const ta = document.createElement('textarea');
+      ta.value = SPEC_MARKDOWN_TEXT;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('SPEC.md berhasil disalin!');
+      } catch (e) {
+        showToast('Gagal menyalin.', 'error');
+      }
+      document.body.removeChild(ta);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAppData();
+      renderBuyerCatalog();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

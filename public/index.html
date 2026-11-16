@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BatikWangi — etalase digital dan manajemen inventaris UMKM batik & kebaya khas Banyuwangi." />
+  <title>BatikWangi — Katalog & Manajemen UMKM Batik Banyuwangi</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/app.css" />
+  <link rel="icon" href="/img/gajah-oling.svg" type="image/svg+xml" />
+</head>
+<body class="selection:bg-amber-600 selection:text-white">
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-[70] flex flex-col gap-2 pointer-events-none" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- ============================== HEADER ============================== -->
+  <header class="sticky top-0 z-40 bg-soga-950/95 backdrop-blur-md text-soga-50 border-b border-amber-500/20 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between py-3.5 gap-3">
+
+        <a href="#katalog" id="brand-link" class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-inner border border-amber-300/30">
+              <svg class="w-6 h-6 text-soga-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3c-4.5 0-7 3.5-7 7.5 0 3.5 2.5 5.5 5 5.5 2 0 3.5-1.5 3.5-3.2 0-1.5-1.2-2.5-2.5-2.5-1 0-1.8.8-1.8 1.7"/>
+                <path d="M12 3c4 0 7 3 7 8 0 4.5-3.5 8-8 8-2.5 0-4.5-1-6-2.5"/>
+                <circle cx="15.5" cy="7.5" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-amber-400 leading-none">Batik<span class="text-soga-50">Wangi</span></p>
+              <p class="text-[11px] text-soga-300 tracking-wider uppercase mt-0.5">Kriya Wastra &amp; Kebaya Banyuwangi</p>
+            </div>
+          </div>
+        </a>
+
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+          <nav class="bg-soga-900 p-1 rounded-xl border border-amber-500/20 flex items-center" aria-label="Navigasi utama">
+            <button type="button" data-nav="catalog" class="nav-btn px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2">
+              <i data-lucide="store" class="w-4 h-4"></i><span>Katalog</span>
+            </button>
+            <button type="button" data-nav="seller" class="nav-btn hidden px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all items-center gap-2">
+              <i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Produk Saya</span>
+            </button>
+            <button type="button" data-nav="admin" class="nav-btn hidden px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all items-center gap-2">
+              <i data-lucide="users" class="w-4 h-4"></i><span>Kelola User</span>
+            </button>
+          </nav>
+
+          <button type="button" data-action="open-cart" class="relative px-3.5 py-2.5 rounded-xl bg-soga-900 border border-amber-500/25 hover:border-amber-500/50 text-soga-50 text-xs sm:text-sm font-semibold flex items-center gap-2 transition">
+            <i data-lucide="shopping-cart" class="w-4 h-4"></i><span class="hidden sm:inline">Keranjang</span>
+            <span id="cart-count" class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-soga-950 text-[10px] font-bold flex items-center justify-center">0</span>
+          </button>
+          <div id="header-account" class="flex items-center gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+
+    <!-- ============================ KATALOG ============================ -->
+    <section id="view-catalog" class="flex-1">
+      <div class="relative bg-gradient-to-br from-soga-950 via-soga-900 to-stone-900 text-soga-50 overflow-hidden border-b border-amber-600/20">
+        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 relative z-10">
+          <div class="max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-medium mb-4">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>Warisan Budaya Bumi Blambangan</span>
+            </div>
+            <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+              Keanggunan Wastra <span class="text-amber-400 italic">Gajah Oling</span> &amp; Kebaya Osing
+            </h1>
+            <p class="mt-3 sm:mt-4 text-sm sm:text-base text-soga-200 leading-relaxed max-w-2xl">
+              Kurasi koleksi batik tulis, batik cap, hingga kebaya khas pengrajin UMKM Banyuwangi. Pilih motif autentik dan pesan langsung ke penjual melalui WhatsApp.
+            </p>
+            <div class="mt-4 flex items-center gap-2 text-xs text-emerald-300 font-medium">
+              <i data-lucide="shield-check" class="w-4 h-4 shrink-0"></i>
+              <span>Setiap pesanan terarah langsung ke nomor WhatsApp penjual produk.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
+        <div class="bg-white rounded-2xl shadow-md border border-soga-200/80 p-4 sm:p-5">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center">
+            <div class="md:col-span-5 relative">
+              <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="search" id="catalog-search" placeholder="Cari motif batik, kebaya, penjual..."
+                class="w-full pl-10 pr-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition" />
+            </div>
+            <div class="md:col-span-4">
+              <select id="catalog-category" class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm font-medium text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500">
+                <option value="">Semua Kategori Wastra</option>
+              </select>
+            </div>
+            <div class="md:col-span-3">
+              <select id="catalog-sort" class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm font-medium text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500">
+                <option value="default">Urutkan: Unggulan &amp; Terbaru</option>
+                <option value="price-asc">Harga: Terendah ke Tertinggi</option>
+                <option value="price-desc">Harga: Tertinggi ke Terendah</option>
+                <option value="name-asc">Nama Produk: A - Z</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3.5 border-t border-soga-100">
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" id="chip-featured" class="filter-chip px-3 py-1.5 rounded-full text-xs font-semibold border border-soga-200 bg-soga-50 text-stone-700 hover:border-amber-500 transition flex items-center gap-1.5">
+                <i data-lucide="award" class="w-3.5 h-3.5 text-amber-600"></i><span>Produk Unggulan</span>
+              </button>
+              <button type="button" id="chip-instock" class="filter-chip px-3 py-1.5 rounded-full text-xs font-semibold border border-soga-200 bg-soga-50 text-stone-700 hover:border-emerald-500 transition flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600"></i><span>Stok Tersedia</span>
+              </button>
+            </div>
+            <p id="catalog-count" class="text-xs text-stone-500 font-medium">Memuat produk…</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        <div id="catalog-empty" class="hidden text-center py-16 bg-white rounded-2xl border border-soga-200/80 shadow-sm">
+          <div class="w-16 h-16 rounded-full bg-soga-100 text-soga-700 flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="search-x" class="w-8 h-8"></i>
+          </div>
+          <h2 class="font-serif text-xl font-bold text-stone-800">Produk Tidak Ditemukan</h2>
+          <p class="text-sm text-stone-500 mt-1 max-w-md mx-auto">Coba ubah kata kunci pencarian atau reset filter kategori yang sedang aktif.</p>
+          <button type="button" data-action="reset-filters" class="mt-5 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold transition">Reset Semua Filter</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= DASHBOARD SELLER ======================= -->
+    <section id="view-seller" class="hidden max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-md mb-1.5">
+            <i data-lucide="store" class="w-3.5 h-3.5"></i> Panel Penjual
+          </div>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-soga-950">Kelola Koleksi BatikWangi</h2>
+          <p class="text-sm text-stone-600 mt-0.5">Kelola produk, stok, kategori, gambar, dan nomor WhatsApp tujuan pesanan.</p>
+        </div>
+        <button type="button" data-action="new-product" class="px-4 py-2.5 rounded-xl bg-soga-900 hover:bg-soga-800 text-amber-400 text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 shadow-md">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i><span>Tambah Produk</span>
+        </button>
+      </div>
+
+      <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Nomor WhatsApp Tujuan Pesanan</p>
+            <p id="seller-wa-display" class="text-lg font-bold text-emerald-950 mt-0.5">Belum diatur</p>
+          </div>
+        </div>
+        <button type="button" data-action="edit-profile" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow-sm">Ubah Nomor</button>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Produk Saya</p>
+            <p id="seller-kpi-products" class="text-2xl sm:text-3xl font-bold text-soga-950 mt-1">0</p>
+            <p class="text-xs text-stone-400 mt-1">Item terdaftar</p>
+          </div>
+          <div class="p-3 rounded-xl bg-amber-50 text-amber-600 border border-amber-200/60"><i data-lucide="package" class="w-5 h-5"></i></div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Total Stok</p>
+            <p id="seller-kpi-stock" class="text-2xl sm:text-3xl font-bold text-emerald-700 mt-1">0</p>
+            <p class="text-xs text-stone-400 mt-1">Unit siap jual</p>
+          </div>
+          <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/60"><i data-lucide="layers" class="w-5 h-5"></i></div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Unggulan</p>
+            <p id="seller-kpi-featured" class="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">0</p>
+            <p class="text-xs text-stone-400 mt-1">Sorotan etalase</p>
+          </div>
+          <div class="p-3 rounded-xl bg-amber-50 text-amber-600 border border-amber-200/60"><i data-lucide="star" class="w-5 h-5"></i></div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Stok Habis</p>
+            <p id="seller-kpi-out" class="text-2xl sm:text-3xl font-bold text-rose-600 mt-1">0</p>
+            <p class="text-xs text-stone-400 mt-1">Perlu restock</p>
+          </div>
+          <div class="p-3 rounded-xl bg-rose-50 text-rose-600 border border-rose-200/60"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 border-b border-soga-200 mb-5">
+        <button type="button" data-seller-tab="products" class="seller-tab px-4 py-2.5 -mb-px border-b-2 border-amber-600 text-soga-950 text-sm font-bold">Produk</button>
+        <button type="button" data-seller-tab="categories" class="seller-tab px-4 py-2.5 -mb-px border-b-2 border-transparent text-stone-500 hover:text-soga-900 text-sm font-bold">Kategori</button>
+      </div>
+
+      <div id="seller-products-panel">
+        <div class="bg-white rounded-2xl border border-soga-200/80 shadow-sm overflow-hidden">
+          <div class="p-4 sm:p-5 border-b border-soga-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h3 class="font-serif text-lg font-bold text-soga-950">Daftar Produk</h3>
+            <div class="relative w-full sm:w-72">
+              <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="search" id="seller-search" placeholder="Filter nama/kategori..."
+                class="w-full pl-9 pr-3 py-2 bg-soga-50 border border-soga-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40" />
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-soga-50/80 border-b border-soga-200 text-[11px] font-bold uppercase tracking-wider text-stone-500">
+                  <th class="py-3.5 px-4">Produk</th>
+                  <th class="py-3.5 px-4">Kategori</th>
+                  <th class="py-3.5 px-4">Harga</th>
+                  <th class="py-3.5 px-4 text-center">Stok</th>
+                  <th class="py-3.5 px-4 text-center">Unggulan</th>
+                  <th class="py-3.5 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="seller-product-rows" class="divide-y divide-soga-100 text-sm"></tbody>
+            </table>
+          </div>
+          <p id="seller-products-empty" class="hidden py-12 text-center text-sm text-stone-500">Belum ada produk. Tambahkan produk pertama Anda.</p>
+        </div>
+      </div>
+
+      <div id="seller-categories-panel" class="hidden">
+        <div class="bg-white rounded-2xl border border-soga-200/80 shadow-sm overflow-hidden">
+          <div class="p-4 sm:p-5 border-b border-soga-100 flex items-center justify-between gap-3">
+            <div>
+              <h3 class="font-serif text-lg font-bold text-soga-950">Kategori Wastra</h3>
+              <p class="text-xs text-stone-500 mt-0.5">Kategori dipakai bersama oleh seluruh penjual.</p>
+            </div>
+            <button type="button" data-action="new-category" class="px-3.5 py-2 rounded-xl bg-soga-900 hover:bg-soga-800 text-amber-400 text-xs font-semibold flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Kategori
+            </button>
+          </div>
+          <div id="seller-category-list" class="divide-y divide-soga-100"></div>
+          <p id="seller-categories-empty" class="hidden py-12 text-center text-sm text-stone-500">Belum ada kategori.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== PANEL ADMIN ========================= -->
+    <section id="view-admin" class="hidden max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-md mb-1.5">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Area Administrator
+          </div>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-soga-950">Manajemen Pengguna</h2>
+          <p class="text-sm text-stone-600 mt-0.5">Kelola akun admin, penjual, dan pembeli BatikWangi.</p>
+        </div>
+        <button type="button" data-action="new-user" class="px-4 py-2.5 rounded-xl bg-soga-900 hover:bg-soga-800 text-amber-400 text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 shadow-md">
+          <i data-lucide="user-plus" class="w-4 h-4"></i><span>Tambah User</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Total User</p>
+          <p id="admin-kpi-users" class="text-2xl sm:text-3xl font-bold text-soga-950 mt-1">0</p>
+          <p id="admin-kpi-users-sub" class="text-xs text-stone-400 mt-1">Semua akun</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Penjual</p>
+          <p id="admin-kpi-sellers" class="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">0</p>
+          <p class="text-xs text-stone-400 mt-1">Pengelola produk</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Pembeli</p>
+          <p id="admin-kpi-buyers" class="text-2xl sm:text-3xl font-bold text-emerald-700 mt-1">0</p>
+          <p class="text-xs text-stone-400 mt-1">Akun pembeli</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-soga-200/80 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Produk &amp; Kategori</p>
+          <p id="admin-kpi-products" class="text-2xl sm:text-3xl font-bold text-soga-800 mt-1">0</p>
+          <p id="admin-kpi-products-sub" class="text-xs text-stone-400 mt-1">0 kategori</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 border-b border-soga-200 mb-5">
+        <button type="button" data-action="admin-tab" data-tab="users" data-admin-tab="users" class="admin-tab px-4 py-2.5 -mb-px border-b-2 border-amber-600 text-soga-950 text-sm font-bold">Pengguna</button>
+        <button type="button" data-action="admin-tab" data-tab="orders" data-admin-tab="orders" class="admin-tab px-4 py-2.5 -mb-px border-b-2 border-transparent text-stone-500 hover:text-soga-900 text-sm font-bold">Pesanan</button>
+      </div>
+
+      <div id="admin-users-panel">
+      <div class="bg-white rounded-2xl border border-soga-200/80 shadow-sm overflow-hidden">
+        <div class="p-4 sm:p-5 border-b border-soga-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h3 class="font-serif text-lg font-bold text-soga-950">Daftar Pengguna</h3>
+          <div class="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
+            <div class="relative w-full sm:w-64">
+              <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="search" id="admin-search" placeholder="Cari nama atau email..."
+                class="w-full pl-9 pr-3 py-2 bg-soga-50 border border-soga-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40" />
+            </div>
+            <select id="admin-role-filter" class="px-3 py-2 bg-soga-50 border border-soga-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/40">
+              <option value="">Semua Role</option>
+              <option value="admin">Admin</option>
+              <option value="seller">Seller</option>
+              <option value="buyer">Pembeli</option>
+            </select>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-soga-50/80 border-b border-soga-200 text-[11px] font-bold uppercase tracking-wider text-stone-500">
+                <th class="py-3.5 px-4">Nama</th>
+                <th class="py-3.5 px-4">Email</th>
+                <th class="py-3.5 px-4">Role</th>
+                <th class="py-3.5 px-4">WhatsApp</th>
+                <th class="py-3.5 px-4 text-center">Status</th>
+                <th class="py-3.5 px-4 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="admin-user-rows" class="divide-y divide-soga-100 text-sm"></tbody>
+          </table>
+        </div>
+        <p id="admin-users-empty" class="hidden py-12 text-center text-sm text-stone-500">Tidak ada user yang sesuai filter.</p>
+      </div>
+      </div>
+
+      <div id="admin-orders-panel" class="hidden">
+        <div class="bg-white rounded-2xl border border-soga-200/80 shadow-sm overflow-hidden">
+          <div class="p-4 sm:p-5 border-b border-soga-100">
+            <h3 class="font-serif text-lg font-bold text-soga-950">Daftar Pesanan Transfer</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-soga-50/80 border-b border-soga-200 text-[11px] font-bold uppercase tracking-wider text-stone-500">
+                  <th class="py-3.5 px-4">ID</th>
+                  <th class="py-3.5 px-4">Pembeli</th>
+                  <th class="py-3.5 px-4">Total</th>
+                  <th class="py-3.5 px-4">Status</th>
+                  <th class="py-3.5 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-order-rows" class="divide-y divide-soga-100 text-sm"></tbody>
+            </table>
+          </div>
+          <p id="admin-orders-empty" class="hidden py-12 text-center text-sm text-stone-500">Belum ada pesanan.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== FOOTER ============================== -->
+  <footer class="bg-soga-950 text-soga-300 border-t border-amber-500/20 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="font-serif font-bold text-amber-400 text-base">BatikWangi</span>
+        <span>•</span>
+        <span>Etalase Digital UMKM Batik &amp; Kebaya Banyuwangi</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="flex items-center gap-1 text-soga-400"><i data-lucide="database" class="w-3.5 h-3.5"></i> MySQL &amp; sesi aman</span>
+        <span class="text-soga-600">|</span>
+        <span class="text-soga-400">© <span id="footer-year">2026</span> BatikWangi</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================ MODAL AUTH =========================== -->
+  <div id="modal-auth" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/75 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-soga-200 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="auth-title" class="font-serif text-xl font-bold text-soga-950">Masuk ke BatikWangi</h2>
+        <button type="button" data-close-modal="modal-auth" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-1 bg-soga-100 p-1 rounded-xl mt-4">
+        <button type="button" data-auth-tab="login" class="auth-tab py-2 rounded-lg text-sm font-semibold bg-white text-soga-950 shadow-sm">Masuk</button>
+        <button type="button" data-auth-tab="register" class="auth-tab py-2 rounded-lg text-sm font-semibold text-stone-600">Daftar Akun</button>
+      </div>
+
+      <form id="login-form" class="mt-4 space-y-4">
+        <div>
+          <label for="login-email" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Email</label>
+          <input type="email" id="login-email" required autocomplete="email" placeholder="nama@email.com"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label for="login-password" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Kata Sandi</label>
+          <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-sm transition">Masuk</button>
+        <p class="text-[11px] text-stone-500 leading-relaxed bg-soga-50 border border-soga-200 rounded-lg p-2.5">
+          Akun demo: <b>admin@batikwangi.id</b> / Admin#12345 · <b>seller1@batikwangi.id</b> / Seller#12345 · <b>buyer1@batikwangi.id</b> / Pembeli#12345
+        </p>
+      </form>
+
+      <form id="register-form" class="mt-4 space-y-3.5 hidden" novalidate>
+        <div>
+          <label for="register-role" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Daftar Sebagai</label>
+          <select id="register-role" class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            <option value="buyer">Pembeli</option>
+            <option value="seller">Penjual (Seller)</option>
+          </select>
+          <p class="text-[11px] text-stone-500 mt-1">Akun penjual baru perlu dikonfirmasi admin sebelum dapat masuk.</p>
+        </div>
+        <div>
+          <label for="register-name" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nama Lengkap</label>
+          <input type="text" id="register-name" required maxlength="100" autocomplete="name" placeholder="Nama Anda"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label for="register-email" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Email</label>
+          <input type="email" id="register-email" required autocomplete="email" placeholder="nama@email.com"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label for="register-whatsapp" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nomor WhatsApp</label>
+          <input type="tel" id="register-whatsapp" inputmode="numeric" autocomplete="tel" placeholder="081234567890"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            aria-describedby="register-whatsapp-error" />
+          <p class="text-[11px] text-stone-500 mt-1">Contoh: <b>081234567890</b> atau <b>6281234567890</b>.</p>
+          <p id="register-whatsapp-error" class="hidden mt-1 text-[11px] font-medium text-rose-600" role="alert"></p>
+        </div>
+        <div>
+          <label for="register-password" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Kata Sandi</label>
+          <div class="relative">
+            <input type="password" id="register-password" required minlength="8" autocomplete="new-password" placeholder="Min. 8 karakter, huruf &amp; angka"
+              class="w-full pl-3.5 pr-11 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              aria-describedby="register-password-hint register-password-error" />
+            <button type="button" data-toggle-password="register-password"
+              class="absolute inset-y-0 right-0 flex items-center px-3 text-stone-400 hover:text-stone-700 rounded-r-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              aria-label="Tampilkan kata sandi" aria-controls="register-password" aria-pressed="false">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p id="register-password-hint" class="text-[11px] text-stone-500 mt-1">Minimal 8 karakter, memuat huruf dan angka.</p>
+          <p id="register-password-error" class="hidden mt-1 text-[11px] font-medium text-rose-600" role="alert"></p>
+        </div>
+        <div>
+          <label for="register-password-confirm" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Konfirmasi Kata Sandi</label>
+          <div class="relative">
+            <input type="password" id="register-password-confirm" required minlength="8" autocomplete="new-password" placeholder="Ulangi kata sandi"
+              class="w-full pl-3.5 pr-11 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              aria-describedby="register-password-confirm-error" />
+            <button type="button" data-toggle-password="register-password-confirm"
+              class="absolute inset-y-0 right-0 flex items-center px-3 text-stone-400 hover:text-stone-700 rounded-r-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              aria-label="Tampilkan konfirmasi kata sandi" aria-controls="register-password-confirm" aria-pressed="false">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p id="register-password-confirm-error" class="hidden mt-1 text-[11px] font-medium text-rose-600" role="alert"></p>
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-soga-900 hover:bg-soga-800 text-amber-400 text-sm font-semibold shadow-sm transition">Daftar</button>
+        <p class="text-[11px] text-stone-500">Pembeli dapat langsung masuk. Penjual dapat mendaftar sendiri, namun akunnya aktif setelah dikonfirmasi admin.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================= MODAL DETAIL PRODUK ===================== -->
+  <div id="modal-product-detail" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="detail-name">
+    <div class="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl border border-soga-200 my-8">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="bg-soga-100 relative aspect-square md:aspect-auto md:min-h-[420px] flex items-center justify-center p-4">
+          <img id="detail-img" src="/img/gajah-oling.svg" alt="Foto produk" class="w-full h-full object-cover rounded-xl shadow-sm" />
+          <span id="detail-featured" class="hidden absolute top-6 left-6 px-3 py-1 rounded-full bg-amber-500 text-soga-950 text-xs font-bold shadow">★ Unggulan</span>
+        </div>
+        <div class="p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-start justify-between gap-2">
+              <span id="detail-category" class="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">Kategori</span>
+              <button type="button" data-close-modal="modal-product-detail" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100 hover:text-stone-700" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <h2 id="detail-name" class="font-serif text-2xl font-bold text-soga-950 mt-3 leading-snug">Nama Produk</h2>
+            <p id="detail-price" class="text-xl font-bold text-amber-700 mt-1.5">Rp 0</p>
+            <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+              <span id="detail-stock" class="px-2.5 py-1 rounded-full font-semibold">Stok: 0</span>
+              <span id="detail-seller" class="px-2.5 py-1 rounded-full bg-soga-100 text-soga-800 font-semibold">Penjual</span>
+            </div>
+            <p id="detail-desc" class="mt-4 text-sm text-stone-600 leading-relaxed">Deskripsi lengkap produk.</p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-soga-100">
+            <div id="detail-qty-wrapper" class="flex items-center justify-between mb-4">
+              <span class="text-xs font-semibold text-stone-600">Jumlah Pesanan:</span>
+              <div class="flex items-center border border-soga-300 rounded-xl overflow-hidden">
+                <button type="button" data-action="qty-decrease" class="px-3 py-1.5 bg-soga-50 hover:bg-soga-100 font-bold text-stone-700" aria-label="Kurangi jumlah">-</button>
+                <input type="number" id="detail-qty" value="1" min="1" readonly class="w-12 text-center text-sm font-bold text-stone-800 bg-white focus:outline-none" aria-label="Jumlah pesanan" />
+                <button type="button" data-action="qty-increase" class="px-3 py-1.5 bg-soga-50 hover:bg-soga-100 font-bold text-stone-700" aria-label="Tambah jumlah">+</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <a id="detail-wa" href="#" target="_blank" rel="noopener noreferrer"
+                class="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md transition">
+                <i data-lucide="message-circle" class="w-5 h-5"></i><span>Pesan via WhatsApp</span>
+              </a>
+              <button type="button" id="detail-add-cart" class="py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md transition">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i><span>Tambah ke Keranjang</span>
+              </button>
+            </div>
+            <p id="detail-wa-note" class="hidden mt-2 text-[11px] text-rose-600 text-center font-medium">Penjual belum mengatur nomor WhatsApp.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================== MODAL PRODUK =========================== -->
+  <div id="modal-product-form" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="product-form-title">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-soga-200 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="product-form-title" class="font-serif text-xl font-bold text-soga-950">Tambah Produk</h2>
+        <button type="button" data-close-modal="modal-product-form" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="product-form" class="mt-4 space-y-4" enctype="multipart/form-data">
+        <input type="hidden" id="product-id" />
+        <div>
+          <label for="product-name" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nama Produk *</label>
+          <input type="text" id="product-name" required minlength="2" maxlength="120" placeholder="Contoh: Batik Tulis Gajah Oling Sekar"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="product-category" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Kategori *</label>
+            <select id="product-category" required class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></select>
+          </div>
+          <div class="flex items-center sm:pt-6">
+            <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+              <input type="checkbox" id="product-featured" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 border-soga-300" />
+              <span class="text-sm font-semibold text-stone-700">Jadikan Unggulan</span>
+            </label>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="product-price" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Harga (Rupiah) *</label>
+            <input type="number" id="product-price" required min="0" step="1000" placeholder="250000"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+          <div>
+            <label for="product-stock" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Stok *</label>
+            <input type="number" id="product-stock" required min="0" step="1" placeholder="10"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+        </div>
+        <div>
+          <label for="product-image" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Gambar Produk <span id="product-image-required">*</span></label>
+          <div class="flex items-center gap-3">
+            <img id="product-image-preview" src="/img/gajah-oling.svg" alt="Pratinjau gambar" class="w-16 h-16 rounded-xl border border-soga-200 object-cover bg-soga-100 shrink-0" />
+            <div class="flex-1">
+              <input type="file" id="product-image" accept="image/jpeg,image/png,image/webp,image/gif"
+                class="block w-full text-xs text-stone-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-soga-100 file:text-soga-800 hover:file:bg-soga-200" />
+              <p class="text-[11px] text-stone-500 mt-1">JPG, PNG, WEBP, atau GIF. Maksimal 3 MB.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label for="product-desc" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Deskripsi Produk *</label>
+          <textarea id="product-desc" rows="3" required minlength="10" maxlength="2000" placeholder="Jelaskan filosofi motif, bahan kain, dan ukuran..."
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+        </div>
+        <div class="pt-3 border-t border-soga-100 flex items-center justify-end gap-2.5">
+          <button type="button" data-close-modal="modal-product-form" class="px-4 py-2.5 rounded-xl border border-soga-200 text-stone-600 hover:bg-soga-50 text-sm font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-sm transition">Simpan Produk</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================= MODAL KATEGORI ========================== -->
+  <div id="modal-category-form" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="category-form-title">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-soga-200">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="category-form-title" class="font-serif text-xl font-bold text-soga-950">Tambah Kategori</h2>
+        <button type="button" data-close-modal="modal-category-form" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="category-form" class="mt-4 space-y-4">
+        <input type="hidden" id="category-id" />
+        <div>
+          <label for="category-name" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nama Kategori *</label>
+          <input type="text" id="category-name" required minlength="2" maxlength="80" placeholder="Contoh: Batik Tulis"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label for="category-desc" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Deskripsi</label>
+          <input type="text" id="category-desc" maxlength="255" placeholder="Keterangan singkat kategori"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div class="pt-3 border-t border-soga-100 flex items-center justify-end gap-2.5">
+          <button type="button" data-close-modal="modal-category-form" class="px-4 py-2.5 rounded-xl border border-soga-200 text-stone-600 hover:bg-soga-50 text-sm font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-sm transition">Simpan Kategori</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================== MODAL USER ============================ -->
+  <div id="modal-user-form" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="user-form-title">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-soga-200 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="user-form-title" class="font-serif text-xl font-bold text-soga-950">Tambah User</h2>
+        <button type="button" data-close-modal="modal-user-form" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="user-form" class="mt-4 space-y-4">
+        <input type="hidden" id="user-id" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="user-name" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nama *</label>
+            <input type="text" id="user-name" required minlength="2" maxlength="100"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+          <div>
+            <label for="user-role" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Role *</label>
+            <select id="user-role" required class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="buyer">Pembeli</option>
+              <option value="seller">Seller</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="user-email" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Email *</label>
+          <input type="email" id="user-email" required
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label for="user-whatsapp" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nomor WhatsApp</label>
+          <input type="tel" id="user-whatsapp" placeholder="6281234567890"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          <p class="text-[11px] text-stone-500 mt-1">Dipakai sebagai tujuan pesanan untuk produk milik seller.</p>
+        </div>
+        <div>
+          <label for="user-password" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1"><span id="user-password-label">Kata Sandi *</span></label>
+          <input type="password" id="user-password" minlength="8" autocomplete="new-password"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          <p id="user-password-hint" class="text-[11px] text-stone-500 mt-1">Minimal 8 karakter, memuat huruf dan angka.</p>
+        </div>
+        <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+          <input type="checkbox" id="user-active" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-soga-300" />
+          <span class="text-sm font-semibold text-stone-700">Akun aktif</span>
+        </label>
+        <div class="pt-3 border-t border-soga-100 flex items-center justify-end gap-2.5">
+          <button type="button" data-close-modal="modal-user-form" class="px-4 py-2.5 rounded-xl border border-soga-200 text-stone-600 hover:bg-soga-50 text-sm font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-sm transition">Simpan User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================== MODAL PROFIL =========================== -->
+  <div id="modal-profile" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-soga-200">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="profile-title" class="font-serif text-xl font-bold text-soga-950">Profil &amp; WhatsApp</h2>
+        <button type="button" data-close-modal="modal-profile" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="profile-form" class="mt-4 space-y-4">
+        <div>
+          <label for="profile-name" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nama</label>
+          <input type="text" id="profile-name" required minlength="2" maxlength="100"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div>
+          <label for="profile-whatsapp" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nomor WhatsApp</label>
+          <input type="tel" id="profile-whatsapp" placeholder="6281234567890"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+          <p class="text-[11px] text-stone-500 mt-1">Format internasional tanpa tanda plus, contoh <b>6281234567890</b>.</p>
+        </div>
+        <div class="pt-3 border-t border-soga-100 flex items-center justify-end gap-2.5">
+          <button type="button" data-close-modal="modal-profile" class="px-4 py-2.5 rounded-xl border border-soga-200 text-stone-600 hover:bg-soga-50 text-sm font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm transition">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================= MODAL KONFIRMASI ======================== -->
+  <div id="modal-confirm" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-soga-200">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-4"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
+      <h2 id="confirm-title" class="font-serif text-xl font-bold text-stone-900">Konfirmasi Aksi</h2>
+      <p id="confirm-message" class="text-sm text-stone-600 mt-1.5 leading-relaxed">Apakah Anda yakin?</p>
+      <div class="mt-6 flex items-center justify-end gap-2.5">
+        <button type="button" id="confirm-cancel" class="px-4 py-2 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 text-sm font-semibold">Batal</button>
+        <button type="button" id="confirm-yes" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-sm">Ya, Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================== MODAL KERANJANG ======================== -->
+  <div id="modal-cart" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-soga-200 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="cart-title" class="font-serif text-xl font-bold text-soga-950">Keranjang Belanja</h2>
+        <button type="button" data-close-modal="modal-cart" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="cart-items" class="mt-4 space-y-3 max-h-[50vh] overflow-y-auto"></div>
+      <p id="cart-empty" class="hidden py-10 text-center text-sm text-stone-500">Keranjang masih kosong.</p>
+      <div class="mt-5 pt-4 border-t border-soga-100 flex items-center justify-between gap-3">
+        <div>
+          <p class="text-xs text-stone-500">Total Pembayaran</p>
+          <p id="cart-total" class="text-xl font-bold text-amber-700">Rp 0</p>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <button type="button" id="cart-clear" class="px-4 py-2.5 rounded-xl border border-soga-200 text-stone-600 hover:bg-soga-50 text-sm font-semibold">Kosongkan</button>
+          <button type="button" id="cart-checkout" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-sm transition">Checkout Transfer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================== MODAL CHECKOUT ========================= -->
+  <div id="modal-checkout" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-soga-200 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="checkout-title" class="font-serif text-xl font-bold text-soga-950">Checkout Transfer</h2>
+        <button type="button" data-close-modal="modal-checkout" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="checkout-form" class="mt-4 space-y-4">
+        <div>
+          <label for="checkout-name" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Nama Pembeli *</label>
+          <input type="text" id="checkout-name" required minlength="2" maxlength="100"
+            class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="checkout-email" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">Email</label>
+            <input type="email" id="checkout-email"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+          <div>
+            <label for="checkout-whatsapp" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1">WhatsApp</label>
+            <input type="tel" id="checkout-whatsapp" placeholder="6281234567890"
+              class="w-full px-3.5 py-2.5 bg-soga-50 border border-soga-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+        </div>
+        <div class="bg-soga-50 border border-soga-200 rounded-xl p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">Ringkasan Pembayaran</p>
+          <p class="text-sm text-stone-700">Total: <span id="checkout-total" class="font-bold text-amber-700">Rp 0</span></p>
+          <p class="text-[11px] text-stone-500 mt-1">Pembayaran dilakukan via transfer bank. Detail rekening ditampilkan setelah pesanan dibuat.</p>
+        </div>
+        <div class="pt-3 border-t border-soga-100 flex items-center justify-end gap-2.5">
+          <button type="button" data-close-modal="modal-checkout" class="px-4 py-2.5 rounded-xl border border-soga-200 text-stone-600 hover:bg-soga-50 text-sm font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-sm transition">Buat Pesanan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================== MODAL PESANAN SAYA ===================== -->
+  <div id="modal-orders" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="orders-title">
+    <div class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl border border-soga-200 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="orders-title" class="font-serif text-xl font-bold text-soga-950">Riwayat Pesanan</h2>
+        <button type="button" data-close-modal="modal-orders" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="orders-list" class="mt-4 space-y-3 max-h-[60vh] overflow-y-auto"></div>
+      <p id="orders-empty" class="hidden py-10 text-center text-sm text-stone-500">Belum ada pesanan.</p>
+    </div>
+  </div>
+
+  <!-- ========================== MODAL PEMBAYARAN ======================= -->
+  <div id="modal-payment" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="payment-title">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-soga-200 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-soga-100">
+        <h2 id="payment-title" class="font-serif text-xl font-bold text-soga-950">Instruksi Pembayaran Transfer</h2>
+        <button type="button" data-close-modal="modal-payment" class="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100" aria-label="Tutup"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="payment-content" class="mt-4 space-y-3"></div>
+      <div class="mt-5 pt-4 border-t border-soga-100 flex items-center justify-end">
+        <button type="button" data-close-modal="modal-payment" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-sm transition">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/lucide.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

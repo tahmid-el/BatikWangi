@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="640" viewBox="0 0 400 320">
+  <defs><pattern id="motif" width="70" height="70" patternUnits="userSpaceOnUse"><rect width="70" height="70" fill="#0f2e26"/><path d="M10 60 Q35 35 60 10 M10 10 Q35 35 60 60" stroke="#34d399" stroke-width="2.5" fill="none"/><ellipse cx="35" cy="22" rx="5" ry="9" fill="none" stroke="#fbbf24" stroke-width="2"/><ellipse cx="35" cy="48" rx="5" ry="9" fill="none" stroke="#fbbf24" stroke-width="2"/></pattern></defs>
+  <rect width="400" height="320" fill="url(#motif)"/><rect width="400" height="320" fill="url(#motif)" opacity="0.25"/>
+  <rect x="0" y="255" width="400" height="65" fill="rgba(15, 10, 8, 0.82)"/>
+  <line x1="24" y1="255" x2="376" y2="255" stroke="#34d399" stroke-width="1.5" stroke-opacity="0.6"/>
+  <text x="200" y="284" font-family="Georgia, serif" font-size="15" font-weight="bold" fill="#34d399" text-anchor="middle" letter-spacing="3">KANGKUNG SETINGKES</text>
+  <text x="200" y="303" font-family="sans-serif" font-size="10" fill="#e7e5e4" text-anchor="middle" letter-spacing="1.5">WASRA KHAS BANYUWANGI</text>
+</svg>
