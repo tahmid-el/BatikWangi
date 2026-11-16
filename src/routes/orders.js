@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const pool = require('../db');
 const { requireAuth, requireRole } = require('../auth');
 
@@ -57,7 +58,15 @@ async function fetchOrderWithItems(conn, orderId) {
 
 /* ----------------------------- Buat pesanan ---------------------------- */
 
-router.post('/', async (req, res, next) => {
+const orderLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Terlalu banyak pesanan dari jaringan ini. Coba lagi nanti.' },
+});
+
+router.post('/', orderLimiter, async (req, res, next) => {
   if (req.user && req.user.role !== 'buyer') {
     return res.status(403).json({ error: 'Hanya pembeli yang dapat melakukan pembelian.' });
   }

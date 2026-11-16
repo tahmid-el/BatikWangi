@@ -8,6 +8,7 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 
 const pool = require('./db');
+const rateLimit = require('express-rate-limit');
 const { loadSessionUser } = require('./auth');
 const { uploadErrorHandler } = require('./upload');
 
@@ -53,6 +54,15 @@ app.use(
 
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ extended: false, limit: '100kb' }));
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Terlalu banyak permintaan. Coba lagi nanti.' },
+});
+app.use('/api', apiLimiter);
 
 const sessionStore = new MySQLStore({
   host: process.env.DB_HOST || '127.0.0.1',

@@ -51,6 +51,7 @@ router.post('/login', loginLimiter, async (req, res, next) => {
     const [rows] = await pool.execute('SELECT * FROM users WHERE email = ? LIMIT 1', [email]);
     const user = rows[0];
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+      console.warn(`[auth] failed login attempt for ${email} from ${req.ip}`);
       return res.status(401).json({ error: 'Email atau kata sandi salah.' });
     }
     if (!user.active) {
