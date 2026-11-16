@@ -58,6 +58,9 @@ async function fetchOrderWithItems(conn, orderId) {
 /* ----------------------------- Buat pesanan ---------------------------- */
 
 router.post('/', async (req, res, next) => {
+  if (req.user && req.user.role !== 'buyer') {
+    return res.status(403).json({ error: 'Hanya pembeli yang dapat melakukan pembelian.' });
+  }
   const conn = await pool.getConnection();
   try {
     const rawItems = Array.isArray(req.body.items) ? req.body.items : [];
@@ -162,7 +165,7 @@ router.post('/', async (req, res, next) => {
 
 /* ----------------------------- Pesanan saya ---------------------------- */
 
-router.get('/mine', requireAuth, async (req, res, next) => {
+router.get('/mine', requireRole('buyer'), async (req, res, next) => {
   try {
     const [rows] = await pool.execute(
       `SELECT id FROM orders WHERE buyer_id = ? ORDER BY created_at DESC, id DESC`,
